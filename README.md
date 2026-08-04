@@ -9,6 +9,15 @@ It mirrors how footage is organised on disk, minus the camera card structure —
 No AI, no network, no API keys. It talks to Resolve through Blackmagic's own
 scripting API.
 
+## Download
+
+Builds for macOS and Windows are attached to each
+[release](https://github.com/bendikkrause/resolve-ingest/releases). Neither is
+code-signed, so both operating systems warn on first launch — the release notes
+give the exact steps.
+
+The macOS build is **Apple Silicon only**; it will not start on an Intel Mac.
+
 ## Requirements
 
 - **DaVinci Resolve Studio** with *Preferences → General → External scripting using* set to **Local**

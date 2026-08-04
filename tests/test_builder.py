@@ -24,26 +24,32 @@ class FakeMediaPool:
         return [object() for _ in paths]
 
 
+# Paths are compared as Resolve receives them — str(Path(...)) — because the
+# separator differs by platform and hardcoded POSIX strings fail on Windows.
+def _paths(*names):
+    return [Path("/x") / name for name in names]
+
+
 def test_video_and_audio_go_in_one_batch():
     pool = FakeMediaPool()
-    files = [Path("/x/a.mp4"), Path("/x/b.mov"), Path("/x/c.wav")]
+    files = _paths("a.mp4", "b.mov", "c.wav")
     import_files(pool, files)
-    assert pool.calls == [["/x/a.mp4", "/x/b.mov", "/x/c.wav"]]
+    assert pool.calls == [[str(f) for f in files]]
 
 
 def test_stills_are_imported_one_at_a_time():
     """Batched, Resolve merges numbered stills into a single sequence clip."""
     pool = FakeMediaPool()
-    files = [Path("/x/DSC_0001.jpg"), Path("/x/DSC_0002.jpg"), Path("/x/DSC_0003.jpg")]
+    files = _paths("DSC_0001.jpg", "DSC_0002.jpg", "DSC_0003.jpg")
     import_files(pool, files)
-    assert pool.calls == [["/x/DSC_0001.jpg"], ["/x/DSC_0002.jpg"], ["/x/DSC_0003.jpg"]]
+    assert pool.calls == [[str(f)] for f in files]
 
 
 def test_mixed_folder_splits_batch_from_stills():
     pool = FakeMediaPool()
-    files = [Path("/x/clip.mov"), Path("/x/DSC_0001.jpg"), Path("/x/DSC_0002.JPG")]
-    import_files(pool, files)
-    assert pool.calls == [["/x/clip.mov"], ["/x/DSC_0001.jpg"], ["/x/DSC_0002.JPG"]]
+    clip, first, second = _paths("clip.mov", "DSC_0001.jpg", "DSC_0002.JPG")
+    import_files(pool, [clip, first, second])
+    assert pool.calls == [[str(clip)], [str(first)], [str(second)]]
 
 
 def test_every_file_is_accounted_for():

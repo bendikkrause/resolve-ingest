@@ -150,9 +150,14 @@ Build the app:
 ### Windows build
 
 PyInstaller cannot cross-compile, so the Windows executable is built on a hosted
-Windows runner by `.github/workflows/build-windows.yml`. Open the finished run
-under the repository's **Actions** tab and download the `Resolve-Ingest-Windows`
-artifact. It contains two files:
+Windows runner by `.github/workflows/build-windows.yml`.
+
+Ready-made builds are attached to each
+[release](https://github.com/bendikkrause/resolve-ingest/releases) — those need no
+GitHub account. Every push also produces a `Resolve-Ingest-Windows` artifact under
+the **Actions** tab, but downloading an artifact requires being signed in.
+
+Either way you get two files:
 
 - `Resolve Ingest.exe` — the app
 - `Resolve Ingest (console).exe` — identical, but keeps a console window so the
@@ -163,8 +168,13 @@ The build is unsigned, so Windows SmartScreen shows a warning on first run
 
 ## Status
 
-macOS is built and tested end-to-end. The Windows paths in `resolve_api.py` follow
-Blackmagic's documented layout but are **unverified on a real Windows machine**.
+macOS is built and tested end-to-end against a live Resolve Studio 21.
+
+Windows builds and the full test suite passes there, but the app has **not yet been
+run against a real Resolve install on Windows**. The scripting paths in
+`resolve_api.py` match Blackmagic's documented layout exactly, so the likely
+failure mode is none at all — but if Resolve isn't found, that is where to look.
+Use the console build to see the error.
 
 The app is unsigned — macOS Gatekeeper will warn on first launch on another
 machine. Distribution needs signing and notarisation.

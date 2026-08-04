@@ -1,0 +1,11 @@
+.venv/
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+
+# Machine-local Claude Code permissions
+.claude/settings.local.json

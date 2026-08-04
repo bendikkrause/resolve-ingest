@@ -1,0 +1,45 @@
+name: Build Windows
+
+# PyInstaller cannot cross-compile, so the Windows executable has to be built on
+# Windows. This produces it on a hosted runner — no Windows machine needed.
+#
+# To get the .exe: open the finished run under the Actions tab and download the
+# "Resolve-Ingest-Windows" artifact. GitHub serves artifacts as a .zip.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # lets you trigger a build by hand from the Actions tab
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build dependencies
+        run: pip install pyinstaller pytest
+
+      # The corpus tests skip themselves when the footage archive isn't mounted,
+      # which it never is here. Everything else is pure and must pass — this is
+      # also the only place the code is exercised on Windows at all.
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Build
+        run: pyinstaller packaging/resolve-ingest.spec --noconfirm
+
+      - name: Upload executables
+        uses: actions/upload-artifact@v4
+        with:
+          name: Resolve-Ingest-Windows
+          path: |
+            dist/Resolve Ingest.exe
+            dist/Resolve Ingest (console).exe
+          if-no-files-found: error

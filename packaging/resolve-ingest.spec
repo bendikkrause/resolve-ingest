@@ -24,6 +24,11 @@ IS_WINDOWS = sys.platform.startswith("win")
 HERE = Path(SPECPATH)
 SRC = str(HERE.parent / "src")
 
+# Generated from icon.png by make_icons.py, both committed so a build needs
+# neither Pillow nor a Mac.
+ICNS = str(HERE / "icon.icns")
+ICO = str(HERE / "icon.ico")
+
 analysis = Analysis(
     [str(HERE / "launcher.py")],
     pathex=[SRC],
@@ -52,6 +57,7 @@ if IS_WINDOWS:
         strip=False,
         upx=False,
         console=False,
+        icon=ICO,
     )
 
     # A Windows GUI executable is detached from the console, so the dual-mode CLI
@@ -69,6 +75,7 @@ if IS_WINDOWS:
         strip=False,
         upx=False,
         console=True,
+        icon=ICO,
     )
 
 else:
@@ -102,7 +109,7 @@ else:
         app = BUNDLE(
             collect,
             name="Resolve Ingest.app",
-            icon=None,
+            icon=ICNS,
             bundle_identifier="no.sandenmedia.resolve-ingest",
             info_plist={
                 "CFBundleShortVersionString": "0.1.0",
